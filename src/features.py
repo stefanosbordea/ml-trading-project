@@ -1,17 +1,48 @@
 import pandas as pd
+import numpy as np
 from load import read_ticker
 from load import show_ticker_list
 
-#MAKE A SERIES FOR EACH TICKER WITH ALL FEATURES
+def returns(ticker,df):
+    close_price = df[f"{ticker}"]["Close"]
+    daily_return =(close_price - close_price.shift(1)) / close_price.shift(1)
+    return_series = pd.Series(daily_return)
+    return return_series
 
-returns = pd.DataFrame()
+def log_returns(ticker,df):
+    close_price = df[f"{ticker}"]["Close"]
+    log_return = np.log(close_price/close_price.shift(1))
+    log_return_series = pd.Series(log_return)
+    return log_return_series
+
+def rol_vol(ticker,df,rolling_period):
+    close_price = df[f"{ticker}"]["Close"]
+    log_return = np.log(close_price/close_price.shift(1))
+    vol =(log_return.rolling(window = rolling_period).std())*np.sqrt(252)
+    return vol
+
+
 
 tickers = show_ticker_list()
+ticker_dict = {}
 for ticker in tickers:
     df=read_ticker(ticker)
-    daily_return =(df[f"{ticker}"]["Close"] - df[f"{ticker}"]["Close"].shift(1)) / df[f"{ticker}"]["Close"].shift(1)
-    return_series = pd.Series(daily_return)
+
+    daily_return = returns(ticker,df)
+    ticker_dict["Return"] = daily_return
+
+    log_return = log_returns(ticker,df)
+    ticker_dict["Log Return"] = log_return
     
-#print(daily_return)
+    vol_20 = rol_vol(ticker,df,20)
+    ticker_dict["Rolling Volatility (20 days)"] = vol_20
+
+    vol_60 = rol_vol(ticker,df,60)
+    ticker_dict["Rolling Volatility (60 days)"] = vol_60
+
+    ticker_features = pd.DataFrame.from_dict(ticker_dict)
+    ticker_features.to_parquet(f"data/processed/{ticker}.parquet")
+    print(ticker_features)
+
 
 
