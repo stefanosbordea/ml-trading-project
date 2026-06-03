@@ -15,6 +15,7 @@ def read_ticker(t):
     return df
 
 
+
 tickers = show_ticker_list()
 for ticker in tickers:
     data = download_ticker(ticker)
