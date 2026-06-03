@@ -21,7 +21,6 @@ for ticker in tickers:
     log_y = norm.pdf(log_x,log_mean,log_std)
     
 
-
     axes[0].hist(daily_log_returns, bins = 50, density =True, color = 'Blue', edgecolor='black')
     axes[0].set_title("Log Returns")
 
