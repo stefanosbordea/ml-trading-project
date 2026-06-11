@@ -11,4 +11,12 @@ class MarketEvent:
     close: float
     volume: int
 
+@dataclass
+class SignalEvent:
+    event_type: str
+    symbol: str
+    date: str
+    direction: str
+
+
     
