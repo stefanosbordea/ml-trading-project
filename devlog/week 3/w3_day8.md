@@ -1,4 +1,4 @@
-Day 7:
+Day 8:
 
 Overview:
 - Created analyst, its signal events and added the mt o backtesting
