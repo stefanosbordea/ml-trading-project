@@ -18,5 +18,12 @@ class SignalEvent:
     date: str
     direction: str
 
+@dataclass
+class OrderEvent:
+    event_type: str
+    symbol:str
+    date:str
+    direction: str
+    quantity: int
 
     
