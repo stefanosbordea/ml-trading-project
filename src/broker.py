@@ -12,7 +12,7 @@ class Broker:
 
     def trade(self,market_note):
         if (self.pending is not None):
-            fill = FillEvent(event_type = "FILL", symbol = self.pending.symbol,date = market_note.date, price = market_note.open, quantity = self.pending.quantity, direction = self.pending.direction, commission = self.commission)
+            fill = FillEvent(event_type = "FILL", symbol = self.pending.symbol,date = market_note.date, price = market_note.open, quantity = self.pending.quantity, direction = self.pending.direction, commission = self.pending.quantity *market_note.open * self.commission)
             self.pending = None
             return fill
         else:

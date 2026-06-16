@@ -11,13 +11,15 @@ tickers = show_ticker_list()
 for ticker in tickers:
     analyst = Analyst()
     manager = Manager(100000)
-    broker = Broker(10)
+    broker = Broker(0.0005)
     fill = None
     for note in clock(ticker):
         tray.append(note)
+        
 
         while len(tray) != 0:
             n = tray.pop(0)
+            
 
             if (n.event_type == "MARKET"):
                 fill = broker.trade(n)
@@ -41,8 +43,11 @@ for ticker in tickers:
             
             elif (n.event_type == "FILL"):
                 manager.fill_order(n)
+         
                
-       
-
+        manager.mark(note.close)
+        
+        
+        
         
         

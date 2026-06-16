@@ -5,6 +5,7 @@ class Manager :
     def __init__(self,cash):
         self.cash = cash
         self.position = 0
+        self.equity_curve =[]
     
     def manage(self,signal_note):
         target = None
@@ -35,6 +36,10 @@ class Manager :
         if (fill_note.direction == "SELL"):
             self.cash += fill_cash - fill_note.commission
             self.position -= fill_note.quantity
+    
+    def mark(self,price):
+        equity = self.cash + (self.position * price)
+        self.equity_curve.append(equity)
 
 
         
