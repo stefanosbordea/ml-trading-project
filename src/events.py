@@ -16,6 +16,7 @@ class SignalEvent:
     event_type: str
     symbol: str
     date: str
+    price: str
     direction: str
 
 @dataclass
@@ -25,5 +26,15 @@ class OrderEvent:
     date:str
     direction: str
     quantity: int
+
+@dataclass
+class FillEvent:
+    event_type: str
+    symbol:str
+    date:str
+    price:float 
+    quantity:int
+    direction: str
+    commission: int
 
     

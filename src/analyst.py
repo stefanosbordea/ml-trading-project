@@ -19,9 +19,9 @@ class Analyst:
         self.notebook = todays_close
         
         if (position > 0 ):
-            return SignalEvent(event_type="SIGNAL",symbol = market_note.symbol,date = market_note.date,direction= "LONG")
+            return SignalEvent(event_type="SIGNAL",symbol = market_note.symbol,date = market_note.date,price = market_note.close,direction= "LONG")
         elif (position < 0):
-            return SignalEvent(event_type="SIGNAL",symbol = market_note.symbol,date = market_note.date,direction= "SHORT")
+            return SignalEvent(event_type="SIGNAL",symbol = market_note.symbol,date = market_note.date,price = market_note.close,direction= "SHORT")
 
         
         

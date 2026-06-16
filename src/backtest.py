@@ -2,6 +2,7 @@ from data_handler import clock
 from load import show_ticker_list
 from analyst import Analyst
 from manager import Manager
+from broker import Broker
 
 tray = []
 
@@ -10,6 +11,8 @@ tickers = show_ticker_list()
 for ticker in tickers:
     analyst = Analyst()
     manager = Manager(100000)
+    broker = Broker(10)
+    fill = None
     for note in clock(ticker):
         tray.append(note)
 
@@ -17,9 +20,15 @@ for ticker in tickers:
             n = tray.pop(0)
 
             if (n.event_type == "MARKET"):
+                fill = broker.trade(n)
+                if (fill is not None):
+                    tray.append(fill)
                 signal = analyst.analyze(n)
                 if (signal is not None):
                     tray.append(signal)
+                    print(signal)
+                else:
+                    print("None")
                     
             elif (n.event_type == "SIGNAL"):
                 order = manager.manage(n)
@@ -27,7 +36,13 @@ for ticker in tickers:
                     tray.append(order)
             
             elif (n.event_type == "ORDER"):
-                print(n.date,n.symbol)
+                broker.pending_order(n)
+                
+            
+            elif (n.event_type == "FILL"):
+                manager.fill_order(n)
+               
+       
 
         
         
