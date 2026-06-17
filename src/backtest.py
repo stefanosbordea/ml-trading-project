@@ -9,9 +9,14 @@ tray = []
 tickers = show_ticker_list()
 
 for ticker in tickers:
+    more_liquid = ["SPY","QQQ","AAPL","MSFT","NVDA"]
+    less_liquid = ["BTC-USD","ETH-USD"]
     analyst = Analyst()
     manager = Manager(100000)
-    broker = Broker(0.0005)
+    if ticker in more_liquid:
+        broker = Broker(0.0005,0.0005)
+    elif ticker in less_liquid:
+        broker = Broker(0.0005,0.001)
     fill = None
     for note in clock(ticker):
         tray.append(note)
