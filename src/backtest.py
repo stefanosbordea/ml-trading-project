@@ -5,6 +5,7 @@ from manager import Manager
 from broker import Broker
 
 tray = []
+total_return_values = {}
 
 tickers = show_ticker_list()
 
@@ -13,12 +14,14 @@ for ticker in tickers:
     less_liquid = ["BTC-USD","ETH-USD"]
     analyst = Analyst()
     manager = Manager(100000)
+
     if ticker in more_liquid:
         broker = Broker(0.0005,0.0005)
     elif ticker in less_liquid:
         broker = Broker(0.0005,0.001)
     fill = None
     for note in clock(ticker):
+
         tray.append(note)
         
 
@@ -33,9 +36,7 @@ for ticker in tickers:
                 signal = analyst.analyze(n)
                 if (signal is not None):
                     tray.append(signal)
-                    print(signal)
-                else:
-                    print("None")
+                    
                     
             elif (n.event_type == "SIGNAL"):
                 order = manager.manage(n)
@@ -50,7 +51,23 @@ for ticker in tickers:
                 manager.fill_order(n)
          
                
-        manager.mark(note.close)
+        equity = manager.mark(note.close)
+    
+    total_profit = manager.equity_curve[-1]-manager.equity_curve[0]
+    total_return = (total_profit/manager.equity_curve[0]) * 100
+    annual_return = ((manager.equity_curve[-1]/manager.equity_curve[0]) ** (1/10)-1) * 100
+    print (annual_return)
+    total_return_values[ticker] = total_return
+    #print(f"{ticker} = {total_return}%")
+
+"""print()
+print("---------------")
+print("BACKTEST SUMMARY")
+print("Total return:")
+for keys,values in total_return_values.items():
+    print(f"{keys} = {values}")"""
+
+
         
         
         
