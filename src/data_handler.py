@@ -3,9 +3,10 @@ from events import MarketEvent
 
 def clock(ticker):
     df = pd.read_parquet(f"data/raw/{ticker}.parquet")
-    df = df.droplevel(0, axis=1)
-    for i in range(len(df)):
-        row = df.iloc[i]
+    dropped = df.dropna()
+    dropped = dropped.droplevel(0, axis=1)
+    for i in range(len(dropped)):
+        row = dropped.iloc[i]
         note = MarketEvent(
             event_type= "MARKET",
             symbol = ticker,

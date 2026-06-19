@@ -20,5 +20,6 @@ tickers = show_ticker_list()
 for ticker in tickers:
     data = download_ticker(ticker)
     data.to_parquet(f"data/raw/{ticker}.parquet")
+
     
 

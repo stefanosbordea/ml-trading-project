@@ -6,6 +6,8 @@ from broker import Broker
 
 tray = []
 total_return_values = {}
+annual_return = {}
+
 
 tickers = show_ticker_list()
 
@@ -14,6 +16,8 @@ for ticker in tickers:
     less_liquid = ["BTC-USD","ETH-USD"]
     analyst = Analyst()
     manager = Manager(100000)
+
+    dates = []
 
     if ticker in more_liquid:
         broker = Broker(0.0005,0.0005)
@@ -30,6 +34,9 @@ for ticker in tickers:
             
 
             if (n.event_type == "MARKET"):
+                d = n.date
+                dates.append(d)
+
                 fill = broker.trade(n)
                 if (fill is not None):
                     tray.append(fill)
@@ -55,17 +62,21 @@ for ticker in tickers:
     
     total_profit = manager.equity_curve[-1]-manager.equity_curve[0]
     total_return = (total_profit/manager.equity_curve[0]) * 100
-    annual_return = ((manager.equity_curve[-1]/manager.equity_curve[0]) ** (1/10)-1) * 100
-    print (annual_return)
+    years = ((dates[-1]-dates[0]).days)/365
+    
+    annual_return[ticker] = ((manager.equity_curve[-1]/manager.equity_curve[0]) ** (1/years)-1) * 100
     total_return_values[ticker] = total_return
-    #print(f"{ticker} = {total_return}%")
+    
 
 """print()
 print("---------------")
 print("BACKTEST SUMMARY")
 print("Total return:")
 for keys,values in total_return_values.items():
-    print(f"{keys} = {values}")"""
+    print(f"{keys} = {values}")
+for keys, values in annual_return.items():
+    print(f"{keys}: {values}")"""
+
 
 
         
