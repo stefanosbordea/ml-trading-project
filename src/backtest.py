@@ -3,13 +3,16 @@ from load import show_ticker_list
 from analyst import Analyst
 from manager import Manager
 from broker import Broker
+import numpy as np
+import math 
 
 tray = []
 
-total_return_values = {}
-annual_return = {}
+total_return_dict = {}
+annual_return_dict = {}
 max_drawdown_dict = {}
-
+sharpe_ratio_dict = {}
+calmar_ratio_dict = {}
 
 tickers = show_ticker_list()
 
@@ -62,13 +65,18 @@ for ticker in tickers:
                
         equity = manager.mark(note.close)
     
+    #total return
     total_profit = manager.equity_curve[-1]-manager.equity_curve[0]
     total_return = (total_profit/manager.equity_curve[0]) * 100
-    years = ((dates[-1]-dates[0]).days)/365
+    total_return_dict[ticker] = total_return
     
-    annual_return[ticker] = ((manager.equity_curve[-1]/manager.equity_curve[0]) ** (1/years)-1) * 100
-    total_return_values[ticker] = total_return
+    
+    #annual return
+    years = ((dates[-1]-dates[0]).days)/365
+    annual_return_dict[ticker] = ((manager.equity_curve[-1]/manager.equity_curve[0]) ** (1/years)-1) * 100
+    
 
+    #max drawdown
     max_drawdown = 0
     max_peak = manager.equity_curve[0]
     for i in range(len(manager.equity_curve)):
@@ -79,6 +87,30 @@ for ticker in tickers:
         if drawdown> max_drawdown:
             max_drawdown = drawdown
     max_drawdown_dict[ticker] = max_drawdown
+
+    #Sharpe ratio
+    rewards = []
+   
+    for i in range(1,len(manager.equity_curve)):
+        reward_difference = ((manager.equity_curve[i] - manager.equity_curve[i-1])/manager.equity_curve[i-1])*100
+        rewards.append(reward_difference)
+
+    total_rewards = sum(rewards)
+    reward_average = total_rewards/len(rewards)
+    v = np.std(rewards)
+    
+    if ticker in more_liquid:
+        sharpe = (reward_average/v)*(math.sqrt(252))
+        sharpe_ratio_dict[ticker] = sharpe
+    
+    else :
+        sharpe = (reward_average/v)*(math.sqrt(365))
+        sharpe_ratio_dict[ticker] = sharpe
+    
+    #Calmar ratio
+    c = annual_return_dict[ticker]/max_drawdown
+    calmar_ratio_dict[ticker] = c
+
             
     
 
