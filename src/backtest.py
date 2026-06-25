@@ -108,28 +108,28 @@ normal_results = {}
 #Buy and Hold dictionaries
 bah_results = {}
 
+if __name__ == "__main__":
+    tickers = show_ticker_list()
 
-tickers = show_ticker_list()
+    more_liquid = ["SPY","QQQ","AAPL","MSFT","NVDA"]
+    less_liquid = ["BTC-USD","ETH-USD"]
+    for ticker in tickers:
+        #Normal Strategy
+        normal_curve,dates = run_backtest(ticker,"normal")  
 
-more_liquid = ["SPY","QQQ","AAPL","MSFT","NVDA"]
-less_liquid = ["BTC-USD","ETH-USD"]
-for ticker in tickers:
-    #Normal Strategy
-    normal_curve,dates = run_backtest(ticker,"normal")  
+        #Buy and hold
+        bah_curve,dates = run_backtest(ticker,"buy_and_hold")
 
-    #Buy and hold
-    bah_curve,dates = run_backtest(ticker,"buy_and_hold")
+        if ticker in more_liquid:
+            normal_results[ticker] = run_metrics(normal_curve,dates,252)
+            bah_results[ticker] = run_metrics(bah_curve,dates,252)
 
-    if ticker in more_liquid:
-        normal_results[ticker] = run_metrics(normal_curve,dates,252)
-        bah_results[ticker] = run_metrics(bah_curve,dates,252)
+        elif ticker in less_liquid:
+            normal_results[ticker] = run_metrics(normal_curve,dates,365)
+            bah_results[ticker] = run_metrics(bah_curve,dates,365)
 
-    elif ticker in less_liquid:
-        normal_results[ticker] = run_metrics(normal_curve,dates,365)
-        bah_results[ticker] = run_metrics(bah_curve,dates,365)
-
-#print(f"| Normal: {normal_results} | BAH : {bah_results}")
-        
+    #print(f"| Normal: {normal_results} | BAH : {bah_results}")
+            
         
         
         
