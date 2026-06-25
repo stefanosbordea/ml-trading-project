@@ -5,13 +5,15 @@ class Manager :
     def __init__(self,cash):
         self.cash = cash
         self.position = 0
-        self.equity_curve =[]
+        self.equity_curve = []
+
     
     def manage(self,signal_note):
         target = None
-
-        if (signal_note.direction == "LONG") :
-            equity = self.cash + (self.position * signal_note.price)
+        equity = self.cash + (self.position * signal_note.price)
+        if (signal_note.buy_and_hold == True):
+            target = equity
+        elif (signal_note.direction == "LONG") :
             target = 0.2 * equity
         elif (signal_note.direction == "SHORT"):
             target = 0
@@ -40,6 +42,8 @@ class Manager :
     def mark(self,price):
         equity = self.cash + (self.position * price)
         self.equity_curve.append(equity)
+    
+
 
 
         
