@@ -24,6 +24,8 @@ def run_backtest(ticker, strategy):
 
     fill = None
     for note in clock(ticker):
+        #avg_50,avg_20 = analyst.sma_crossover(note)
+        #print(avg_50,avg_20)
 
         tray.append(note)
 
@@ -38,10 +40,12 @@ def run_backtest(ticker, strategy):
                 fill = broker.trade(n)
                 if (fill is not None):
                     tray.append(fill)
-                if strategy == "normal":
+                if strategy == "momentum":
                     signal = analyst.analyze(n)
                 elif strategy == "buy_and_hold":
                     signal = analyst.buy_and_hold(n)
+                elif strategy == "sma":
+                    signal = analyst.sma_crossover(n)
                 if (signal is not None):
                     tray.append(signal)
                     
@@ -102,11 +106,10 @@ def run_metrics(curve, dates, period_per_year):
     
     return {"total_return":total_return,"annual_return":annual_return,"max_drawdown":max_drawdown,"sharpe":sharpe,"calmar":calmar}
 
-#Normal Strategy dicitonaries
-normal_results = {}
-
-#Buy and Hold dictionaries
+#Dicitonaries
+momentum_results = {}
 bah_results = {}
+sma_results = {}
 
 if __name__ == "__main__":
     tickers = show_ticker_list()
@@ -114,21 +117,23 @@ if __name__ == "__main__":
     more_liquid = ["SPY","QQQ","AAPL","MSFT","NVDA"]
     less_liquid = ["BTC-USD","ETH-USD"]
     for ticker in tickers:
-        #Normal Strategy
-        normal_curve,dates = run_backtest(ticker,"normal")  
-
-        #Buy and hold
+    
+        #Curves
+        momentum_curve,dates = run_backtest(ticker,"momentum")  
         bah_curve,dates = run_backtest(ticker,"buy_and_hold")
+        sma_curve,dates = run_backtest(ticker,"sma")
 
         if ticker in more_liquid:
-            normal_results[ticker] = run_metrics(normal_curve,dates,252)
+            momentum_results[ticker] = run_metrics(momentum_curve,dates,252)
             bah_results[ticker] = run_metrics(bah_curve,dates,252)
+            sma_results[ticker] = run_metrics(sma_curve,dates,252)
 
         elif ticker in less_liquid:
-            normal_results[ticker] = run_metrics(normal_curve,dates,365)
+            momentum_results[ticker] = run_metrics(momentum_curve,dates,365)
             bah_results[ticker] = run_metrics(bah_curve,dates,365)
+            sma_results[ticker] = run_metrics(sma_curve,dates,365)
 
-    #print(f"| Normal: {normal_results} | BAH : {bah_results}")
+    #print(f"| Momentum: {momentum_results} | BAH : {bah_results} | SMA : {sma_results}")
             
         
         

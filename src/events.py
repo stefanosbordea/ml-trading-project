@@ -18,7 +18,7 @@ class SignalEvent:
     date: str
     price: str
     direction: str
-    buy_and_hold: bool
+    strategy: str
 
 @dataclass
 class OrderEvent:
