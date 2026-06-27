@@ -21,8 +21,11 @@ class Manager :
                 target = 0
             elif (signal_note.strategy == 'sma' and signal_note.direction == "LONG"):
                 target = 0.2 * equity
-                
             elif (signal_note.strategy == 'sma' and signal_note.direction == "SHORT"):
+                target = 0
+            elif (signal_note.strategy == "12-1" and signal_note.direction == "LONG"):
+                target = 0.2 * equity
+            elif (signal_note.strategy == "12-1" and signal_note.direction == "SHORT"):
                 target = 0
             
             self.signal = signal_note.direction

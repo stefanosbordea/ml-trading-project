@@ -24,8 +24,6 @@ def run_backtest(ticker, strategy):
 
     fill = None
     for note in clock(ticker):
-        #avg_50,avg_20 = analyst.sma_crossover(note)
-        #print(avg_50,avg_20)
 
         tray.append(note)
 
@@ -46,6 +44,8 @@ def run_backtest(ticker, strategy):
                     signal = analyst.buy_and_hold(n)
                 elif strategy == "sma":
                     signal = analyst.sma_crossover(n)
+                elif strategy == "12-1":
+                    signal = analyst.twelve_minus_one(n)
                 if (signal is not None):
                     tray.append(signal)
                     
@@ -110,6 +110,7 @@ def run_metrics(curve, dates, period_per_year):
 momentum_results = {}
 bah_results = {}
 sma_results = {}
+twelve_one_results = {}
 
 if __name__ == "__main__":
     tickers = show_ticker_list()
@@ -122,18 +123,21 @@ if __name__ == "__main__":
         momentum_curve,dates = run_backtest(ticker,"momentum")  
         bah_curve,dates = run_backtest(ticker,"buy_and_hold")
         sma_curve,dates = run_backtest(ticker,"sma")
+        twelve_one_curve,dates = run_backtest(ticker,"12-1")
 
         if ticker in more_liquid:
             momentum_results[ticker] = run_metrics(momentum_curve,dates,252)
             bah_results[ticker] = run_metrics(bah_curve,dates,252)
             sma_results[ticker] = run_metrics(sma_curve,dates,252)
+            twelve_one_results[ticker] = run_metrics(twelve_one_curve,dates,252)
 
         elif ticker in less_liquid:
             momentum_results[ticker] = run_metrics(momentum_curve,dates,365)
             bah_results[ticker] = run_metrics(bah_curve,dates,365)
             sma_results[ticker] = run_metrics(sma_curve,dates,365)
+            twelve_one_results[ticker] = run_metrics(twelve_one_curve,dates,365)
 
-    #print(f"| Momentum: {momentum_results} | BAH : {bah_results} | SMA : {sma_results}")
+    print(f"| Momentum: {momentum_results} | BAH : {bah_results} | SMA : {sma_results} | 12-1 : {twelve_one_results}")
             
         
         

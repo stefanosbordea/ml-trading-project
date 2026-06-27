@@ -1,4 +1,5 @@
 from events import SignalEvent
+import pandas as pd
 
 class Analyst:
 
@@ -6,6 +7,7 @@ class Analyst:
         self.notebook = None
         self.invested = False
         self.sma = []
+        self.twelve_one = []
 
     def analyze(self,market_note):
         todays_close = market_note.close
@@ -54,7 +56,33 @@ class Analyst:
                 return SignalEvent(event_type="SIGNAL",symbol = market_note.symbol,date = market_note.date,price = market_note.close,direction= "LONG",strategy = "sma")
             elif avg_20 < avg_50 :
                 return SignalEvent(event_type="SIGNAL",symbol = market_note.symbol,date = market_note.date,price = market_note.close,direction= "SHORT",strategy = "sma")
-        
+    
+    def find_target(self,list,target):
+        for entry in reversed(list):
+            if entry[0] <= target:
+                return entry[1]
+        return None
+
+    def twelve_minus_one(self,market_note):
+        self.twelve_one.append((market_note.date,market_note.close))
+
+        year = market_note.date - pd.DateOffset(months = 12)
+        month = market_note.date - pd.DateOffset(months = 1)
+
+        price_year = self.find_target(self.twelve_one,year)
+        price_month = self.find_target(self.twelve_one,month)
+
+        if (price_year is not None and price_month is not None):
+
+            s = ((price_month - price_year) / price_year) * 100
+            if s > 0:
+                return SignalEvent(event_type="SIGNAL",symbol = market_note.symbol,date = market_note.date,price = market_note.close,direction= "LONG",strategy = "12-1")
+            elif s < 0:
+                return SignalEvent(event_type="SIGNAL",symbol = market_note.symbol,date = market_note.date,price = market_note.close,direction= "SHORT",strategy = "12-1")
+        else:
+            return None
+
+
         
         
 
