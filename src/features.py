@@ -25,6 +25,17 @@ def lag_returns(ticker,df,lag_period):
     lag_row = returns(ticker,df).shift(lag_period)
     return lag_row
 
+def run_rsi(ticker,df):
+    close_price = df[f"{ticker}"]["Close"]
+    daily_return =(close_price - close_price.shift(1)) / close_price.shift(1)
+
+    gains = daily_return.clip(lower=0).rolling(window = 14).mean()
+    losses = abs(daily_return.clip(upper=0)).rolling(window = 14).mean()
+
+    rs = gains/losses
+    rsi = 100 - (100/(1+rs))
+    return rsi
+
 
 tickers = show_ticker_list()
 
@@ -52,6 +63,10 @@ for ticker in tickers:
 
     lag_10 = lag_returns(ticker,df,10)
     ticker_dict["Lagged Returns (10 days)"] = lag_10
+    
+    rsi = run_rsi(ticker,df)
+    ticker_dict["RSI"] = rsi
+
 
     ticker_features = pd.DataFrame.from_dict(ticker_dict)
     ticker_features.to_parquet(f"data/processed/{ticker}.parquet")
