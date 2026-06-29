@@ -21,11 +21,15 @@ def rol_vol(ticker,df,rolling_period):
     vol =(log_return.rolling(window = rolling_period).std())*np.sqrt(252)
     return vol
 
+def lag_returns(ticker,df,lag_period):
+    lag_row = returns(ticker,df).shift(lag_period)
+    return lag_row
 
 
 tickers = show_ticker_list()
-ticker_dict = {}
+
 for ticker in tickers:
+    ticker_dict = {}
     df=read_ticker(ticker)
 
     daily_return = returns(ticker,df)
@@ -40,9 +44,18 @@ for ticker in tickers:
     vol_60 = rol_vol(ticker,df,60)
     ticker_dict["Rolling Volatility (60 days)"] = vol_60
 
+    lag_1 = lag_returns(ticker,df,1)
+    ticker_dict["Lagged Returns (1 day)"] = lag_1
+    
+    lag_5 = lag_returns(ticker,df,5)
+    ticker_dict["Lagged Returns (5 days)"] = lag_5
+
+    lag_10 = lag_returns(ticker,df,10)
+    ticker_dict["Lagged Returns (10 days)"] = lag_10
+
     ticker_features = pd.DataFrame.from_dict(ticker_dict)
     ticker_features.to_parquet(f"data/processed/{ticker}.parquet")
-    print(ticker_features)
+    #print(ticker_features)
 
 
 
