@@ -12,4 +12,4 @@ What/How I learned:
 - My dataframes were pandas Timestamps so i had to use target = current_date - pd.DateOffset(months=12)
 
 What's next:
-- Start linear regression model
+- Start logistic regression model
