@@ -36,6 +36,14 @@ def run_rsi(ticker,df):
     rsi = 100 - (100/(1+rs))
     return rsi
 
+def target(ticker,df):
+    current_day_close = df[f"{ticker}"]["Close"]
+    next_day_close = current_day_close.shift(-1)
+    target_column = (next_day_close>current_day_close).astype(int)
+    target_column = target_column.iloc[:-1]
+    return target_column
+    
+
 
 tickers = show_ticker_list()
 
@@ -67,10 +75,13 @@ for ticker in tickers:
     rsi = run_rsi(ticker,df)
     ticker_dict["RSI"] = rsi
 
-
-    ticker_features = pd.DataFrame.from_dict(ticker_dict)
+    target_column = target(ticker,df)
+    ticker_dict["target"] = target_column
+   
+    ticker_features = pd.DataFrame.from_dict(ticker_dict).dropna()
+    ticker_features["target"] = ticker_features["target"].astype(int)
     ticker_features.to_parquet(f"data/processed/{ticker}.parquet")
-    #print(ticker_features)
+    print(ticker_features)
 
 
 
