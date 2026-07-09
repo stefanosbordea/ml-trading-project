@@ -8,7 +8,7 @@ Struggles:
 - Was repeating a lot of code for run_dictionaries()
 
 What/How I learned:
-- I returned a dictionary after run_meetrics() which then i just splitted into the dictionaries
+- I returned a dictionary after run_metrics() which then i just splitted into the dictionaries
 
 What's next:
 - Creating non-ML baselines
