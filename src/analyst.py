@@ -81,6 +81,9 @@ class Analyst:
                 return SignalEvent(event_type="SIGNAL",symbol = market_note.symbol,date = market_note.date,price = market_note.close,direction= "SHORT",strategy = "12-1")
         else:
             return None
+    
+    
+        
 
 
         
