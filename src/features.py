@@ -81,7 +81,7 @@ for ticker in tickers:
     ticker_features = pd.DataFrame.from_dict(ticker_dict).dropna()
     ticker_features["target"] = ticker_features["target"].astype(int)
     ticker_features.to_parquet(f"data/processed/{ticker}.parquet")
-    #print(ticker_features)
+    
 
 
 

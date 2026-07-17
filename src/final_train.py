@@ -22,5 +22,4 @@ model = LogisticRegression(max_iter=1000,random_state=42)
 model.fit(x_train_cv_scaled,y_train_cv)
 
 joblib.dump(model, "models/logistic_model.pkl")
-
 joblib.dump(scaler, "models/scaler.pkl")

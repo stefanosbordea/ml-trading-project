@@ -5,6 +5,11 @@ from manager import Manager
 from broker import Broker
 import numpy as np
 import math 
+def index(curve,dates):
+    idx = int(len(dates) * 0.8)
+    curve = curve[idx:]
+    dates = dates[idx:]
+    return curve,dates
 
 def run_backtest(ticker, strategy):
     tray = []
@@ -24,7 +29,6 @@ def run_backtest(ticker, strategy):
 
     fill = None
     for note in clock(ticker):
-
         tray.append(note)
 
         while len(tray) != 0:
@@ -46,6 +50,8 @@ def run_backtest(ticker, strategy):
                     signal = analyst.sma_crossover(n)
                 elif strategy == "12-1":
                     signal = analyst.twelve_minus_one(n)
+                elif strategy == "simple logistic":
+                    signal = analyst.simple_logistic_regression(n)
                 if (signal is not None):
                     tray.append(signal)
                     
@@ -64,9 +70,11 @@ def run_backtest(ticker, strategy):
 
         manager.mark(note.close)
 
+    manager.equity_curve,dates = index(manager.equity_curve,dates)
     return manager.equity_curve,dates
 
 def run_metrics(curve, dates, period_per_year):
+    
     #total return
     total_profit = curve[-1]-curve[0]
     total_return = (total_profit/curve[0]) * 100
@@ -111,12 +119,15 @@ momentum_results = {}
 bah_results = {}
 sma_results = {}
 twelve_one_results = {}
+simple_logistic_results = {}
 
 if __name__ == "__main__":
     tickers = show_ticker_list()
 
     more_liquid = ["SPY","QQQ","AAPL","MSFT","NVDA"]
     less_liquid = ["BTC-USD","ETH-USD"]
+
+    
     for ticker in tickers:
     
         #Curves
@@ -124,20 +135,25 @@ if __name__ == "__main__":
         bah_curve,dates = run_backtest(ticker,"buy_and_hold")
         sma_curve,dates = run_backtest(ticker,"sma")
         twelve_one_curve,dates = run_backtest(ticker,"12-1")
+        simple_logistic_curve,dates = run_backtest(ticker,"simple logistic")
+        
+
 
         if ticker in more_liquid:
             momentum_results[ticker] = run_metrics(momentum_curve,dates,252)
             bah_results[ticker] = run_metrics(bah_curve,dates,252)
             sma_results[ticker] = run_metrics(sma_curve,dates,252)
             twelve_one_results[ticker] = run_metrics(twelve_one_curve,dates,252)
+            simple_logistic_results[ticker] = run_metrics(simple_logistic_curve,dates,252)
 
         elif ticker in less_liquid:
             momentum_results[ticker] = run_metrics(momentum_curve,dates,365)
             bah_results[ticker] = run_metrics(bah_curve,dates,365)
             sma_results[ticker] = run_metrics(sma_curve,dates,365)
             twelve_one_results[ticker] = run_metrics(twelve_one_curve,dates,365)
+            simple_logistic_results[ticker] = run_metrics(simple_logistic_curve,dates,365)
 
-    print(f"| Momentum: {momentum_results} | BAH : {bah_results} | SMA : {sma_results} | 12-1 : {twelve_one_results}")
+    print(f"| Momentum: {momentum_results} | BAH : {bah_results} | SMA : {sma_results} | 12-1 : {twelve_one_results} | Simple Logistic Regression : {simple_logistic_results}")
             
         
         

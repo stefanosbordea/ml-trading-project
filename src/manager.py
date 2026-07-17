@@ -27,8 +27,10 @@ class Manager :
                 target = 0.2 * equity
             elif (signal_note.strategy == "12-1" and signal_note.direction == "SHORT"):
                 target = 0
-            
-            self.signal = signal_note.direction
+            elif (signal_note.strategy == "simple logistic" and signal_note.direction == "LONG"):
+                target = 0.2 * equity
+            elif (signal_note.strategy == "simple logistic" and signal_note.direction == "SHORT"):
+                target = -0.2 * equity
            
         
             target_units = math.floor(target/signal_note.price)

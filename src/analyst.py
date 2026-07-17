@@ -1,5 +1,7 @@
 from events import SignalEvent
 import pandas as pd
+import numpy as np
+import joblib
 
 class Analyst:
 
@@ -8,6 +10,9 @@ class Analyst:
         self.invested = False
         self.sma = []
         self.twelve_one = []
+        self.model = joblib.load("models/logistic_model.pkl")
+        self.scaler = joblib.load("models/scaler.pkl")
+        self.features = None
 
     def analyze(self,market_note):
         todays_close = market_note.close
@@ -82,7 +87,27 @@ class Analyst:
         else:
             return None
     
+    def simple_logistic_regression(self,market_note):
+         if self.features is None :
+            self.features = pd.read_parquet(f"data/processed/{market_note.symbol}.parquet")
+         
+         if market_note.date in self.features.index:
+            todays_row = self.features.loc[[market_note.date]]
+            todays_features = todays_row.iloc[:,:8]
+            todays_features_scaled = self.scaler.transform(todays_features)
+            y_pred = self.model.predict(todays_features_scaled)
+
+            if y_pred[0] == 1 :
+             return SignalEvent(event_type="SIGNAL",symbol=market_note.symbol,date=market_note.date,price=market_note.close,direction="LONG",strategy= "simple logistic")
+            elif y_pred[0] == 0 :
+             return SignalEvent(event_type="SIGNAL",symbol=market_note.symbol,date=market_note.date,price=market_note.close,direction="SHORT",strategy= "simple logistic")
+         else:
+            return None
     
+         
+         
+
+
         
 
 
