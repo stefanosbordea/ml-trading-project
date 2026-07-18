@@ -5,6 +5,9 @@ from manager import Manager
 from broker import Broker
 import numpy as np
 import math 
+import pandas as pd
+from tabulate import tabulate
+
 def index(curve,dates):
     idx = int(len(dates) * 0.8)
     curve = curve[idx:]
@@ -52,6 +55,8 @@ def run_backtest(ticker, strategy):
                     signal = analyst.twelve_minus_one(n)
                 elif strategy == "simple logistic":
                     signal = analyst.simple_logistic_regression(n)
+                elif strategy == "benchmark 20":
+                    signal = analyst.benchmark_20(n)
                 if (signal is not None):
                     tray.append(signal)
                     
@@ -120,6 +125,7 @@ bah_results = {}
 sma_results = {}
 twelve_one_results = {}
 simple_logistic_results = {}
+benchmark_20_results = {}
 
 if __name__ == "__main__":
     tickers = show_ticker_list()
@@ -127,7 +133,8 @@ if __name__ == "__main__":
     more_liquid = ["SPY","QQQ","AAPL","MSFT","NVDA"]
     less_liquid = ["BTC-USD","ETH-USD"]
 
-    
+    records = []
+
     for ticker in tickers:
     
         #Curves
@@ -136,26 +143,48 @@ if __name__ == "__main__":
         sma_curve,dates = run_backtest(ticker,"sma")
         twelve_one_curve,dates = run_backtest(ticker,"12-1")
         simple_logistic_curve,dates = run_backtest(ticker,"simple logistic")
-        
-
+        benchmark_20_curve,dates = run_backtest(ticker, "benchmark 20")
 
         if ticker in more_liquid:
-            momentum_results[ticker] = run_metrics(momentum_curve,dates,252)
+            records.append({"ticker":ticker,"strategy":"momentum",**run_metrics(momentum_curve,dates,252)})
+            records.append({"ticker":ticker,"strategy":"benchmark 20%",**run_metrics(benchmark_20_curve,dates,252)})
+            records.append({"ticker":ticker,"strategy":"buy and hold",**run_metrics(bah_curve,dates,252)})
+            records.append({"ticker":ticker,"strategy":"simple moving avg",**run_metrics(sma_curve,dates,252)})
+            records.append({"ticker":ticker,"strategy":"12-1",**run_metrics(twelve_one_curve,dates,252)})
+            records.append({"ticker":ticker,"strategy":"simple logistic regression",**run_metrics(simple_logistic_curve,dates,252)})
+            
+
+            """ momentum_results[ticker] = run_metrics(momentum_curve,dates,252)
             bah_results[ticker] = run_metrics(bah_curve,dates,252)
             sma_results[ticker] = run_metrics(sma_curve,dates,252)
             twelve_one_results[ticker] = run_metrics(twelve_one_curve,dates,252)
             simple_logistic_results[ticker] = run_metrics(simple_logistic_curve,dates,252)
+            benchmark_20_results[ticker] = run_metrics(benchmark_2__curve,252)"""
 
         elif ticker in less_liquid:
-            momentum_results[ticker] = run_metrics(momentum_curve,dates,365)
+            records.append({"ticker":ticker,"strategy":"momentum",**run_metrics(momentum_curve,dates,365)})
+            records.append({"ticker":ticker,"strategy":"benchmark 20%",**run_metrics(benchmark_20_curve,dates,365)})
+            records.append({"ticker":ticker,"strategy":"buy and hold",**run_metrics(bah_curve,dates,365)})
+            records.append({"ticker":ticker,"strategy":"simple moving avg",**run_metrics(sma_curve,dates,365)})
+            records.append({"ticker":ticker,"strategy":"12-1",**run_metrics(twelve_one_curve,dates,365)})
+            records.append({"ticker":ticker,"strategy":"simple logistic regression",**run_metrics(simple_logistic_curve,dates,365)})
+
+            """momentum_results[ticker] = run_metrics(momentum_curve,dates,365)
             bah_results[ticker] = run_metrics(bah_curve,dates,365)
             sma_results[ticker] = run_metrics(sma_curve,dates,365)
             twelve_one_results[ticker] = run_metrics(twelve_one_curve,dates,365)
             simple_logistic_results[ticker] = run_metrics(simple_logistic_curve,dates,365)
+            benchmark_20_results[ticker] = run_metrics(benchmark_2__curve,365)"""
 
-    print(f"| Momentum: {momentum_results} | BAH : {bah_results} | SMA : {sma_results} | 12-1 : {twelve_one_results} | Simple Logistic Regression : {simple_logistic_results}")
-            
-        
+    #Results Table
+    metrics = ["total_return","sharpe","max_drawdown","calmar"]
+    results = pd.DataFrame(records)
+    results_table = ""
+    for metric in metrics:
+        results_table += f"## {metric}\n\n" +tabulate(results.pivot(index ="ticker", columns="strategy",values=metric).round(2), headers="keys",tablefmt="github",floatfmt=".2f")+"\n\n"
+
+    with open("data/results/backtest_results.md","w") as f:
+        f.write(results_table)
         
         
         

@@ -103,6 +103,14 @@ class Analyst:
              return SignalEvent(event_type="SIGNAL",symbol=market_note.symbol,date=market_note.date,price=market_note.close,direction="SHORT",strategy= "simple logistic")
          else:
             return None
+         
+    def benchmark_20(self,market_note):
+            if self.invested is False:
+                self.invested = True
+                return SignalEvent(event_type="SIGNAL",symbol = market_note.symbol,date = market_note.date,price = market_note.close,direction= "LONG",strategy = "benchmark 20")
+            else:
+                return None
+
     
          
          
