@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from load import read_ticker
 from load import show_ticker_list
+from testingdf import test_df
 
 def returns(ticker,df):
     close_price = df[f"{ticker}"]["Close"]
@@ -42,7 +43,19 @@ def target(ticker,df):
     target_column = (next_day_close>current_day_close).astype(int)
     target_column = target_column.iloc[:-1]
     return target_column
+
+def run_macd(ticker,df):
+    current_day_close = df[f"{ticker}"]["Close"]
     
+    avg_12 = current_day_close.ewm(span = 12, adjust=False).mean()
+    avg_26 = current_day_close.ewm(span = 26, adjust=False).mean()
+
+    macd_line = avg_12 - avg_26
+    signal_line = macd_line.ewm(span = 9, adjust=False).mean()
+    histogram_line = macd_line - signal_line
+
+
+    return histogram_line
 
 
 tickers = show_ticker_list()
@@ -75,12 +88,17 @@ for ticker in tickers:
     rsi = run_rsi(ticker,df)
     ticker_dict["RSI"] = rsi
 
+    macd = run_macd(ticker,df)
+    ticker_dict["MACD"] = macd
+
     target_column = target(ticker,df)
     ticker_dict["target"] = target_column
    
     ticker_features = pd.DataFrame.from_dict(ticker_dict).dropna()
     ticker_features["target"] = ticker_features["target"].astype(int)
     ticker_features.to_parquet(f"data/processed/{ticker}.parquet")
+
+
     
 
 
