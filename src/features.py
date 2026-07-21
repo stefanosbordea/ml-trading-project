@@ -57,6 +57,46 @@ def run_macd(ticker,df):
 
     return histogram_line
 
+def run_bollinger(ticker,df):
+    current_day_close = df[f"{ticker}"]["Close"]
+
+    middle_band = current_day_close.rolling(window = 20).mean()
+    k =  current_day_close.rolling(window = 20).std()
+    upper_band = middle_band + (2*k)
+    lower_band = middle_band - (2*k)
+
+    bollinger_ratio = (current_day_close - lower_band) / (upper_band-lower_band)
+
+    return bollinger_ratio
+
+def run_volume_ratio(ticker,df):
+    todays_volume = df[f"{ticker}"]["Volume"]
+    volume_rol20 = todays_volume.rolling(window = 20).mean()
+
+    vr = todays_volume/volume_rol20
+
+    return vr
+
+def calendar_day(ticker,df):
+  
+    today = df.index.dayofweek
+
+    day_numbers = {
+        "is_monday": 0,
+        "is_tuesday": 1,
+        "is_wednesday": 2,
+        "is_thursday": 3,
+        "is_friday": 4,
+        "is_saturday": 5
+
+    }
+    return {
+        key: pd.Series((today == value).astype(int), index = df.index)
+        for key,value in day_numbers.items()
+    }
+
+    
+
 
 tickers = show_ticker_list()
 
@@ -91,6 +131,14 @@ for ticker in tickers:
     macd = run_macd(ticker,df)
     ticker_dict["MACD"] = macd
 
+    bollinger_bands = run_bollinger(ticker,df)
+    ticker_dict["Bollinger Bands"] = bollinger_bands
+    
+    volume_ratio = run_volume_ratio(ticker,df)
+    ticker_dict["Volume Ratio"] = volume_ratio
+
+    ticker_dict.update(calendar_day(ticker,df))
+
     target_column = target(ticker,df)
     ticker_dict["target"] = target_column
    
@@ -98,8 +146,7 @@ for ticker in tickers:
     ticker_features["target"] = ticker_features["target"].astype(int)
     ticker_features.to_parquet(f"data/processed/{ticker}.parquet")
 
-
-    
-
+t = calendar_day("TEST",test_df)
+print(t)
 
 
