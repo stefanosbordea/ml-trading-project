@@ -27,7 +27,7 @@ def data_split():
 
     for ticker in tickers :
         df = pd.read_parquet(f"data/processed/{ticker}.parquet")
-        x = df.iloc[:,:8]
+        x = df.iloc[:,:18]
         y = df.iloc[:,-1]
 
         x_tr,x_,y_tr,y_ = train_test_split(x,y, test_size = 0.40, shuffle = False)

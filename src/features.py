@@ -95,8 +95,12 @@ def calendar_day(ticker,df):
         for key,value in day_numbers.items()
     }
 
-    
+def run_volatility_regime(ticker,df):
+    vol_60 = rol_vol(ticker,df,60)
+    vol_20 = rol_vol(ticker,df,20)
+    regime = vol_20/vol_60
 
+    return regime
 
 tickers = show_ticker_list()
 
@@ -129,15 +133,18 @@ for ticker in tickers:
     ticker_dict["RSI"] = rsi
 
     macd = run_macd(ticker,df)
-    ticker_dict["MACD"] = macd
+    ticker_dict["MACD Histogram"] = macd
 
     bollinger_bands = run_bollinger(ticker,df)
-    ticker_dict["Bollinger Bands"] = bollinger_bands
+    ticker_dict["Bollinger Bands- Position Ratio"] = bollinger_bands
     
     volume_ratio = run_volume_ratio(ticker,df)
     ticker_dict["Volume Ratio"] = volume_ratio
 
     ticker_dict.update(calendar_day(ticker,df))
+
+    volatility_regime = run_volatility_regime(ticker,df)
+    ticker_dict["Volatility Regime"] = volatility_regime
 
     target_column = target(ticker,df)
     ticker_dict["target"] = target_column
@@ -146,7 +153,6 @@ for ticker in tickers:
     ticker_features["target"] = ticker_features["target"].astype(int)
     ticker_features.to_parquet(f"data/processed/{ticker}.parquet")
 
-t = calendar_day("TEST",test_df)
-print(t)
+
 
 

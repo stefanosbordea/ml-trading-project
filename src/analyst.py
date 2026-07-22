@@ -93,7 +93,7 @@ class Analyst:
          
          if market_note.date in self.features.index:
             todays_row = self.features.loc[[market_note.date]]
-            todays_features = todays_row.iloc[:,:8]
+            todays_features = todays_row.iloc[:,:18]
             todays_features_scaled = self.scaler.transform(todays_features)
             y_pred = self.model.predict(todays_features_scaled)
 
