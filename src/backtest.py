@@ -153,14 +153,6 @@ if __name__ == "__main__":
             records.append({"ticker":ticker,"strategy":"12-1",**run_metrics(twelve_one_curve,dates,252)})
             records.append({"ticker":ticker,"strategy":"simple logistic regression",**run_metrics(simple_logistic_curve,dates,252)})
             
-
-            """ momentum_results[ticker] = run_metrics(momentum_curve,dates,252)
-            bah_results[ticker] = run_metrics(bah_curve,dates,252)
-            sma_results[ticker] = run_metrics(sma_curve,dates,252)
-            twelve_one_results[ticker] = run_metrics(twelve_one_curve,dates,252)
-            simple_logistic_results[ticker] = run_metrics(simple_logistic_curve,dates,252)
-            benchmark_20_results[ticker] = run_metrics(benchmark_2__curve,252)"""
-
         elif ticker in less_liquid:
             records.append({"ticker":ticker,"strategy":"momentum",**run_metrics(momentum_curve,dates,365)})
             records.append({"ticker":ticker,"strategy":"benchmark 20%",**run_metrics(benchmark_20_curve,dates,365)})
@@ -169,12 +161,6 @@ if __name__ == "__main__":
             records.append({"ticker":ticker,"strategy":"12-1",**run_metrics(twelve_one_curve,dates,365)})
             records.append({"ticker":ticker,"strategy":"simple logistic regression",**run_metrics(simple_logistic_curve,dates,365)})
 
-            """momentum_results[ticker] = run_metrics(momentum_curve,dates,365)
-            bah_results[ticker] = run_metrics(bah_curve,dates,365)
-            sma_results[ticker] = run_metrics(sma_curve,dates,365)
-            twelve_one_results[ticker] = run_metrics(twelve_one_curve,dates,365)
-            simple_logistic_results[ticker] = run_metrics(simple_logistic_curve,dates,365)
-            benchmark_20_results[ticker] = run_metrics(benchmark_2__curve,365)"""
 
     #Results Table
     metrics = ["total_return","sharpe","max_drawdown","calmar"]

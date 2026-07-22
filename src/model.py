@@ -6,7 +6,7 @@ from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from load import show_ticker_list , data_split
-import utils
+
 
 x_train,x_cv,x_test,y_train,y_cv,y_test = data_split()
 
