@@ -1,5 +1,3 @@
-import numpy as np
-import pandas as pd
 from load import data_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
