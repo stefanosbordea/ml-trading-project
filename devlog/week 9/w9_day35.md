@@ -17,6 +17,5 @@ What I learned:
 - So logistic + Random Forest + XGBoost (linear, bagging, boosting) ALL hit the base rate -> the ceiling is the problem/features, not the model. This closes the "maybe I needed a better model" objection
 
 What's next:
-- LightGBM (probably same result - it's XGBoost's cousin), or skip it
 - Walk-forward validation, class weights, SHAP
 - Write up the Week 5 comparison deliverable: logistic vs RF vs XGBoost, all no out-of-sample edge

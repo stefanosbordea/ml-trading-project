@@ -70,7 +70,6 @@ Tasks:
 
 - Implement non-ML baselines: buy-and-hold, simple moving average crossover (20/50), 12-1 momentum.
 - Implement first ML baseline: logistic regression predicting next-day direction.
-- Features: lagged returns (1, 5, 10 days), 20-day rolling volatility, 14-day RSI.
 - Critical: use a time-based train/test split. **Never** random k-fold on time-series data.
 - Compare the ML model honestly against the non-ML baselines using the same backtester.
 
