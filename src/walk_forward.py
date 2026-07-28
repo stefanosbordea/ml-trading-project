@@ -7,6 +7,7 @@ from xgboost import XGBClassifier
 from sklearn.linear_model import LogisticRegression
 
 
+
 def run_walk_forward(model,scaling):
     tickers = show_ticker_list()
     concat_df_list = []
@@ -63,7 +64,8 @@ def run_walk_forward(model,scaling):
     plt.legend()
     plt.show()
 
-run_walk_forward(XGBClassifier(n_estimators = 500, learning_rate = 0.1,verbosity =1,random_state = 55),scaling = False)
+
+
 
         
 
