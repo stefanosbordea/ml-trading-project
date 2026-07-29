@@ -2,6 +2,7 @@ from load import data_split
 from xgboost import XGBClassifier
 import matplotlib.pyplot as plt
 import shap
+from sklearn.metrics import f1_score
 
 def run_shap_plot(model,x_test):
     xgb_explainer = shap.TreeExplainer(model)

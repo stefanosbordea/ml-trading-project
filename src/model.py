@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error,f1_score, roc_auc_score
 from load import show_ticker_list , data_split
 
 
@@ -17,6 +17,8 @@ cv_scores = []
 models = []
 polys =[]
 scalers = []
+f1_scores = []
+auc_scores =[]
 
 for degree in range(1,5):
     #Polynomial features
@@ -39,8 +41,13 @@ for degree in range(1,5):
     x_cv_mapped = poly.transform(x_cv)
     x_cv_mapped_scaled = scaler_poly.transform(x_cv_mapped)
 
-    y_pred = model.predict(x_train_mapped_scaled)
-    
+    cv_pred = model.predict(x_cv_mapped_scaled)
+    probs = model.predict_proba(x_cv_mapped_scaled)[:,1]
+    f1 = f1_score(y_cv,cv_pred)
+    f1_scores.append(f1)
+    auc = roc_auc_score(y_cv,probs)
+    auc_scores.append(auc)
+
     train_base = y_train.mean()
     train_score = model.score(x_train_mapped_scaled,y_train)
 
@@ -52,11 +59,13 @@ for degree in range(1,5):
     cv_bases.append(cvs_base)   
     cv_scores.append(cvs_score)
 
+print(f1_scores)
+print(auc_scores)
 degrees = range(1,5)
 optimal_grade = degrees[np.argmax(cv_scores)]
 
 
-plt.figure(figsize=(8,5))
+"""plt.figure(figsize=(8,5))
 
 plt.subplot(1,2,1)
 plt.plot(degrees,train_bases, label = "Train Baseline")
@@ -74,7 +83,7 @@ plt.ylabel("Accuracy")
 plt.title('Baseline/Accuracy vs Polynomial Degree')
 plt.legend()
 
-plt.show()
+plt.show()"""
 
 
 
